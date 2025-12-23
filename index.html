@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timer</title>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -30,6 +31,111 @@
             max-width: 500px;
             width: 100%;
             position: relative;
+        }
+
+        .auth-container {
+            max-width: 400px;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: #757575;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #424242;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #757575;
+        }
+
+        .auth-toggle a {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .user-email {
+            font-size: 13px;
+            color: #757575;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #e0e0e0;
         }
 
         .status-badge {
@@ -136,6 +242,15 @@
 
         .btn-primary:active {
             transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #1a1a1a;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
         }
 
         .menu-btn {
@@ -317,17 +432,14 @@
             gap: 12px;
         }
 
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #1a1a1a;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-
         .hidden {
             display: none !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #757575;
         }
 
         @media (max-width: 768px) {
@@ -431,7 +543,39 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Auth View -->
+    <div class="container auth-container" id="authView">
+        <div class="auth-title" id="authTitle">Sign In</div>
+        <div class="auth-subtitle" id="authSubtitle">Sign in to sync your timer across all devices</div>
+        
+        <form id="authForm">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="authEmail" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="authPassword" required minlength="6">
+            </div>
+            <div class="error-message" id="authError"></div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" id="authSubmitBtn">
+                Sign In
+            </button>
+        </form>
+        
+        <div class="auth-toggle">
+            <span id="authToggleText">Don't have an account?</span>
+            <a id="authToggleLink">Sign Up</a>
+        </div>
+    </div>
+
+    <!-- Timer View -->
+    <div class="container hidden" id="timerView">
+        <div class="user-info">
+            <div class="user-email" id="userEmail"></div>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+
         <div class="status-badge unlocked" id="statusBadge">
             <svg class="status-icon" id="statusIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
@@ -571,10 +715,33 @@
     </div>
 
     <script>
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://bewmmwtxbnbcslmylxfv.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_JZ3sCw-H9h3Q_Y4jhVHelA_UZxuwx9u';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Global state
+        let currentUser = null;
         let endTime = null;
         let timerInterval = null;
         let isPaused = false;
         let remainingTime = 0;
+        let realtimeChannel = null;
+
+        // DOM elements
+        const authView = document.getElementById('authView');
+        const timerView = document.getElementById('timerView');
+        const authForm = document.getElementById('authForm');
+        const authEmail = document.getElementById('authEmail');
+        const authPassword = document.getElementById('authPassword');
+        const authError = document.getElementById('authError');
+        const authSubmitBtn = document.getElementById('authSubmitBtn');
+        const authTitle = document.getElementById('authTitle');
+        const authSubtitle = document.getElementById('authSubtitle');
+        const authToggleText = document.getElementById('authToggleText');
+        const authToggleLink = document.getElementById('authToggleLink');
+        const userEmail = document.getElementById('userEmail');
+        const logoutBtn = document.getElementById('logoutBtn');
 
         const statusBadge = document.getElementById('statusBadge');
         const statusText = document.getElementById('statusText');
@@ -590,24 +757,138 @@
         const addModal = document.getElementById('addModal');
         const removeModal = document.getElementById('removeModal');
 
-        // LocalStorage functions
-        function saveTimerState() {
-            const state = {
-                endTime: endTime,
-                isPaused: isPaused,
-                remainingTime: remainingTime
-            };
-            localStorage.setItem('timerState', JSON.stringify(state));
+        let isSignUp = false;
+
+        // Auth toggle
+        authToggleLink.addEventListener('click', () => {
+            isSignUp = !isSignUp;
+            if (isSignUp) {
+                authTitle.textContent = 'Sign Up';
+                authSubtitle.textContent = 'Create an account to sync your timer';
+                authSubmitBtn.textContent = 'Sign Up';
+                authToggleText.textContent = 'Already have an account?';
+                authToggleLink.textContent = 'Sign In';
+            } else {
+                authTitle.textContent = 'Sign In';
+                authSubtitle.textContent = 'Sign in to sync your timer across all devices';
+                authSubmitBtn.textContent = 'Sign In';
+                authToggleText.textContent = "Don't have an account?";
+                authToggleLink.textContent = 'Sign Up';
+            }
+            authError.classList.remove('show');
+        });
+
+        // Auth form submit
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            authError.classList.remove('show');
+            authSubmitBtn.disabled = true;
+            authSubmitBtn.textContent = 'Loading...';
+
+            const email = authEmail.value;
+            const password = authPassword.value;
+
+            try {
+                if (isSignUp) {
+                    const { data, error } = await supabase.auth.signUp({
+                        email: email,
+                        password: password,
+                    });
+                    if (error) throw error;
+                    authError.textContent = 'Check your email for confirmation link!';
+                    authError.style.color = '#2e7d32';
+                    authError.classList.add('show');
+                } else {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password,
+                    });
+                    if (error) throw error;
+                }
+            } catch (error) {
+                authError.style.color = '#d32f2f';
+                authError.textContent = error.message;
+                authError.classList.add('show');
+                authSubmitBtn.disabled = false;
+                authSubmitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', async () => {
+            await supabase.auth.signOut();
+        });
+
+        // Check auth state
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (session?.user) {
+                currentUser = session.user;
+                showTimerView();
+            } else {
+                currentUser = null;
+                showAuthView();
+            }
+        });
+
+        function showAuthView() {
+            authView.classList.remove('hidden');
+            timerView.classList.add('hidden');
+            if (realtimeChannel) {
+                supabase.removeChannel(realtimeChannel);
+                realtimeChannel = null;
+            }
+            stopTimer();
         }
 
-        function loadTimerState() {
-            const saved = localStorage.getItem('timerState');
-            if (saved) {
-                const state = JSON.parse(saved);
-                if (state.endTime) {
-                    endTime = state.endTime;
-                    isPaused = state.isPaused;
-                    remainingTime = state.remainingTime;
+        function showTimerView() {
+            authView.classList.add('hidden');
+            timerView.classList.remove('hidden');
+            userEmail.textContent = currentUser.email;
+            loadTimerFromDB();
+            subscribeToRealtimeUpdates();
+        }
+
+        // Subscribe to realtime updates
+        function subscribeToRealtimeUpdates() {
+            realtimeChannel = supabase
+                .channel('timer-changes')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'timers',
+                        filter: `user_id=eq.${currentUser.id}`
+                    },
+                    (payload) => {
+                        console.log('Realtime update received:', payload);
+                        if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
+                            loadTimerFromDB();
+                        } else if (payload.eventType === 'DELETE') {
+                            stopTimer();
+                        }
+                    }
+                )
+                .subscribe();
+        }
+
+        // Load timer from database
+        async function loadTimerFromDB() {
+            try {
+                const { data, error } = await supabase
+                    .from('timers')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    throw error;
+                }
+
+                if (data && data.end_time) {
+                    endTime = data.end_time;
+                    isPaused = data.is_paused;
+                    remainingTime = data.remaining_time;
 
                     // Check if timer should still be active
                     if (!isPaused && endTime > Date.now()) {
@@ -625,7 +906,9 @@
                         startBtn.classList.add('hidden');
                         menuBtn.classList.remove('hidden');
                         
-                        timerInterval = setInterval(updateTimer, 100);
+                        if (!timerInterval) {
+                            timerInterval = setInterval(updateTimer, 100);
+                        }
                         updateTimer();
                     } else if (isPaused && remainingTime > 0) {
                         // Timer is paused
@@ -656,15 +939,48 @@
                             Resume Timer
                         `;
                     } else {
-                        // Timer expired, clear it
-                        clearTimerState();
+                        // Timer expired
+                        await clearTimerInDB();
                     }
                 }
+            } catch (error) {
+                console.error('Error loading timer:', error);
             }
         }
 
-        function clearTimerState() {
-            localStorage.removeItem('timerState');
+        // Save timer to database
+        async function saveTimerToDB() {
+            try {
+                const { data, error } = await supabase
+                    .from('timers')
+                    .upsert({
+                        user_id: currentUser.id,
+                        end_time: endTime,
+                        is_paused: isPaused,
+                        remaining_time: remainingTime,
+                        updated_at: new Date().toISOString()
+                    }, {
+                        onConflict: 'user_id'
+                    });
+
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error saving timer:', error);
+            }
+        }
+
+        // Clear timer from database
+        async function clearTimerInDB() {
+            try {
+                const { error } = await supabase
+                    .from('timers')
+                    .delete()
+                    .eq('user_id', currentUser.id);
+
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error clearing timer:', error);
+            }
         }
 
         // Format number with leading zero
@@ -710,7 +1026,7 @@
         }
 
         // Start timer
-        function startTimer(days, hours, minutes) {
+        async function startTimer(days, hours, minutes) {
             const totalMs = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
             endTime = Date.now() + totalMs;
             isPaused = false;
@@ -730,11 +1046,11 @@
             
             timerInterval = setInterval(updateTimer, 100);
             updateTimer();
-            saveTimerState();
+            await saveTimerToDB();
         }
 
         // Pause timer
-        function pauseTimer() {
+        async function pauseTimer() {
             if (!isPaused) {
                 isPaused = true;
                 remainingTime = endTime - Date.now();
@@ -755,12 +1071,13 @@
                     Pause Timer
                 `;
             }
-            saveTimerState();
+            await saveTimerToDB();
         }
 
         // Stop timer
-        function stopTimer() {
+        async function stopTimer() {
             clearInterval(timerInterval);
+            timerInterval = null;
             endTime = null;
             isPaused = false;
             remainingTime = 0;
@@ -788,31 +1105,33 @@
                 Pause Timer
             `;
             
-            clearTimerState();
+            if (currentUser) {
+                await clearTimerInDB();
+            }
         }
 
         // Add time to existing timer
-        function addTime(days, hours, minutes) {
-            const additionalTime = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+        async function addTime(days, hours) {
+            const additionalTime = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000);
             if (isPaused) {
                 remainingTime += additionalTime;
             } else {
                 endTime += additionalTime;
             }
             updateTimer();
-            saveTimerState();
+            await saveTimerToDB();
         }
 
         // Remove time from existing timer
-        function removeTime(days, hours, minutes) {
-            const timeToRemove = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+        async function removeTime(days, hours) {
+            const timeToRemove = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000);
             if (isPaused) {
                 remainingTime = Math.max(0, remainingTime - timeToRemove);
             } else {
                 endTime = Math.max(Date.now(), endTime - timeToRemove);
             }
             updateTimer();
-            saveTimerState();
+            await saveTimerToDB();
         }
 
         // Event listeners
@@ -867,7 +1186,7 @@
             const hours = parseInt(document.getElementById('addHoursInput').value) || 0;
             
             if (days > 0 || hours > 0) {
-                addTime(days, hours, 0);
+                addTime(days, hours);
                 addModal.classList.remove('active');
                 document.getElementById('addDaysInput').value = 0;
                 document.getElementById('addHoursInput').value = 1;
@@ -883,7 +1202,7 @@
             const hours = parseInt(document.getElementById('removeHoursInput').value) || 0;
             
             if (days > 0 || hours > 0) {
-                removeTime(days, hours, 0);
+                removeTime(days, hours);
                 removeModal.classList.remove('active');
                 document.getElementById('removeDaysInput').value = 0;
                 document.getElementById('removeHoursInput').value = 1;
@@ -920,8 +1239,17 @@
             }
         });
 
-        // Load saved timer state on page load
-        loadTimerState();
+        // Initialize
+        (async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.user) {
+                currentUser = session.user;
+                showTimerView();
+            } else {
+                showAuthView();
+            }
+        })();
     </script>
 </body>
 </html>
+
