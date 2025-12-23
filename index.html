@@ -117,45 +117,52 @@
         }
 
         .time-value.small {
-            font-size: 28px;
+            font-size: 24px;
         }
 
         .time-value.inactive {
-            opacity: 0.2;
+            color: #bdbdbd;
         }
 
         .time-label {
             font-size: 12px;
-            color: #666;
             text-transform: uppercase;
             letter-spacing: 1px;
+            color: #757575;
             font-weight: 500;
         }
 
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            position: relative;
+        }
+
         .btn {
-            width: 100%;
-            padding: 16px 24px;
+            flex: 1;
+            padding: 16px 28px;
             border: none;
             border-radius: 12px;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            font-family: 'DM Sans', sans-serif;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a1a1a;
             color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            background: #2d2d2d;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
@@ -167,29 +174,45 @@
             background: #e0e0e0;
         }
 
-        .btn.hidden {
-            display: none;
+        .menu-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            color: #9e9e9e;
         }
 
-        .menu-button {
-            position: relative;
+        .menu-btn:hover {
+            background: #e0e0e0;
+            color: #757575;
+        }
+
+        .menu-btn svg {
+            width: 20px;
+            height: 20px;
         }
 
         .dropdown {
             position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
+            bottom: 60px;
             right: 0;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             padding: 8px;
+            min-width: 180px;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(-10px);
+            transform: translateY(8px);
             transition: all 0.2s ease;
             z-index: 10;
-            min-width: 200px;
         }
 
         .dropdown.active {
@@ -253,11 +276,10 @@
 
         .modal-content {
             background: white;
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 32px;
             max-width: 400px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             transform: scale(0.9);
             transition: transform 0.3s ease;
         }
@@ -267,63 +289,16 @@
         }
 
         .modal-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
-            color: #1a1a1a;
             margin-bottom: 8px;
+            color: #1a1a1a;
         }
 
         .modal-subtitle {
             font-size: 14px;
-            color: #666;
+            color: #757575;
             margin-bottom: 24px;
-        }
-
-        .time-input-container {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .time-input-group {
-            flex: 1;
-        }
-
-        .input-label {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            font-family: 'Courier Prime', monospace;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .input-field::-webkit-inner-spin-button,
-        .input-field::-webkit-outer-spin-button {
-            opacity: 1;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
         }
 
         .input-group {
@@ -331,42 +306,109 @@
             position: relative;
         }
 
-        .text-input {
-            text-align: left;
-            font-family: 'DM Sans', sans-serif;
-        }
-
         .password-toggle {
             position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
+            right: 14px;
+            top: 38px;
             background: none;
             border: none;
             cursor: pointer;
+            color: #9e9e9e;
             padding: 4px;
-            color: #666;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 12px;
         }
 
         .password-toggle:hover {
-            color: #1a1a1a;
+            color: #757575;
+        }
+
+        .password-toggle svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #424242;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Courier Prime', monospace;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        .input-field.text-input {
+            font-family: 'DM Sans', sans-serif;
+            text-align: left;
+        }
+
+        .time-input-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .time-input-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            color: #2e7d32;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
         }
 
         .auth-toggle {
             text-align: center;
             margin-top: 16px;
             font-size: 14px;
-            color: #666;
+            color: #757575;
         }
 
         .auth-toggle a {
-            color: #667eea;
+            color: #1a1a1a;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
         }
 
@@ -374,42 +416,21 @@
             text-decoration: underline;
         }
 
-        .auth-message {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 16px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+        .hidden {
+            display: none !important;
         }
 
-        .auth-message.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .auth-error {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .auth-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .container {
                 padding: 40px 30px;
             }
 
             .time-value {
-                font-size: 48px;
+                font-size: 42px;
             }
 
             .time-value.small {
-                font-size: 24px;
+                font-size: 20px;
             }
 
             .timer-display {
@@ -418,6 +439,19 @@
 
             .time-label {
                 font-size: 11px;
+            }
+
+            .modal-content {
+                padding: 24px;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .input-field {
+                padding: 12px 14px;
+                font-size: 15px;
             }
 
             .btn {
@@ -530,22 +564,14 @@
             </div>
         </div>
 
-        <button class="btn btn-primary" id="startBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            Set Timer
-        </button>
-
-        <div class="menu-button">
-            <button class="btn btn-secondary hidden" id="menuBtn">
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn">Set Timer</button>
+            <button class="menu-btn hidden" id="menuBtn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="1"></circle>
                     <circle cx="12" cy="5" r="1"></circle>
                     <circle cx="12" cy="19" r="1"></circle>
                 </svg>
-                Menu
             </button>
             <div class="dropdown" id="dropdown">
                 <button class="dropdown-item" id="pauseBtn">
@@ -557,16 +583,14 @@
                 </button>
                 <button class="dropdown-item" id="addTimeBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="16"></line>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
                     Add Time
                 </button>
                 <button class="dropdown-item" id="removeTimeBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
                     Remove Time
                 </button>
@@ -587,9 +611,6 @@
             <div class="modal-title" id="authModalTitle">Sign In</div>
             <div class="modal-subtitle" id="authModalSubtitle">Sign in to sync your timer across devices</div>
             
-            <div class="auth-message auth-error" id="authError"></div>
-            <div class="auth-message auth-success" id="authSuccess"></div>
-            
             <form id="authForm">
                 <div class="input-group">
                     <label class="input-label">Email</label>
@@ -606,19 +627,22 @@
                     </button>
                 </div>
                 <div class="input-group" style="margin-bottom: 0;">
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: #666;">
-                        <input type="checkbox" id="rememberMe" style="cursor: pointer;">
-                        Remember me
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: #424242;">
+                        <input type="checkbox" id="rememberMe" checked style="width: 16px; height: 16px; cursor: pointer;">
+                        <span>Keep me signed in</span>
                     </label>
                 </div>
-                <div class="modal-actions" style="margin-top: 24px;">
+                <div class="error-message" id="authError"></div>
+                <div class="success-message" id="authSuccess"></div>
+                <div class="modal-actions" style="margin-top: 20px;">
                     <button type="button" class="btn btn-secondary" id="cancelAuthBtn">Cancel</button>
                     <button type="submit" class="btn btn-primary" id="authSubmitBtn">Sign In</button>
                 </div>
             </form>
             
             <div class="auth-toggle">
-                Don't have an account? <a id="authToggleLink">Sign up</a>
+                <span id="authToggleText">Don't have an account?</span>
+                <a id="authToggleLink">Sign Up</a>
             </div>
         </div>
     </div>
@@ -653,7 +677,7 @@
     <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-title">Add Time</div>
-            <div class="modal-subtitle">Add time to the timer</div>
+            <div class="modal-subtitle">Add additional time to the timer</div>
             <div class="time-input-container">
                 <div class="time-input-group">
                     <label class="input-label">Days</label>
@@ -695,12 +719,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ===== CONFIGURATION AUTO-LOGIN =====
-        // ⚠️ REMPLACE CES VALEURS PAR TES IDENTIFIANTS
-        const AUTO_LOGIN_EMAIL = 'thelias91@gmail.com';
-        const AUTO_LOGIN_PASSWORD = 'Soniaty236';
-        // ====================================
-
         // Timer state
         let endTime = null;
         let timerInterval = null;
@@ -719,15 +737,17 @@
         const authForm = document.getElementById('authForm');
         const authEmail = document.getElementById('authEmail');
         const authPassword = document.getElementById('authPassword');
-        const authSubmitBtn = document.getElementById('authSubmitBtn');
-        const cancelAuthBtn = document.getElementById('cancelAuthBtn');
-        const authToggleLink = document.getElementById('authToggleLink');
-        const authModalTitle = document.getElementById('authModalTitle');
-        const authModalSubtitle = document.getElementById('authModalSubtitle');
         const authError = document.getElementById('authError');
         const authSuccess = document.getElementById('authSuccess');
+        const authSubmitBtn = document.getElementById('authSubmitBtn');
+        const cancelAuthBtn = document.getElementById('cancelAuthBtn');
+        const authModalTitle = document.getElementById('authModalTitle');
+        const authModalSubtitle = document.getElementById('authModalSubtitle');
+        const authToggleText = document.getElementById('authToggleText');
+        const authToggleLink = document.getElementById('authToggleLink');
         const passwordToggle = document.getElementById('passwordToggle');
         const eyeIcon = document.getElementById('eyeIcon');
+
         const statusBadge = document.getElementById('statusBadge');
         const statusText = document.getElementById('statusText');
         const statusIcon = document.getElementById('statusIcon');
@@ -761,44 +781,6 @@
             return supabaseClient;
         }
 
-        // Password toggle
-        passwordToggle.addEventListener('click', () => {
-            const type = authPassword.type === 'password' ? 'text' : 'password';
-            authPassword.type = type;
-            
-            if (type === 'text') {
-                eyeIcon.innerHTML = `
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                `;
-            } else {
-                eyeIcon.innerHTML = `
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                `;
-            }
-        });
-
-        // Toggle between sign in and sign up
-        authToggleLink.addEventListener('click', () => {
-            isSignUpMode = !isSignUpMode;
-            if (isSignUpMode) {
-                authModalTitle.textContent = 'Sign Up';
-                authModalSubtitle.textContent = 'Create an account to sync your timer';
-                authSubmitBtn.textContent = 'Sign Up';
-                authToggleLink.textContent = 'Sign in';
-                authToggleLink.parentElement.firstChild.textContent = 'Already have an account? ';
-            } else {
-                authModalTitle.textContent = 'Sign In';
-                authModalSubtitle.textContent = 'Sign in to sync your timer across devices';
-                authSubmitBtn.textContent = 'Sign In';
-                authToggleLink.textContent = 'Sign up';
-                authToggleLink.parentElement.firstChild.textContent = "Don't have an account? ";
-            }
-            authError.classList.remove('show');
-            authSuccess.classList.remove('show');
-        });
-
         // Auth button click
         authButton.addEventListener('click', async () => {
             if (currentUser) {
@@ -827,22 +809,61 @@
             authSuccess.classList.remove('show');
         });
 
+        // Toggle sign up/sign in
+        authToggleLink.addEventListener('click', () => {
+            isSignUpMode = !isSignUpMode;
+            if (isSignUpMode) {
+                authModalTitle.textContent = 'Sign Up';
+                authModalSubtitle.textContent = 'Create an account to sync across devices';
+                authSubmitBtn.textContent = 'Sign Up';
+                authToggleText.textContent = 'Already have an account?';
+                authToggleLink.textContent = 'Sign In';
+            } else {
+                authModalTitle.textContent = 'Sign In';
+                authModalSubtitle.textContent = 'Sign in to sync your timer across devices';
+                authSubmitBtn.textContent = 'Sign In';
+                authToggleText.textContent = "Don't have an account?";
+                authToggleLink.textContent = 'Sign Up';
+            }
+            authError.classList.remove('show');
+            authSuccess.classList.remove('show');
+        });
+
+        // Password visibility toggle
+        passwordToggle.addEventListener('click', () => {
+            const type = authPassword.type === 'password' ? 'text' : 'password';
+            authPassword.type = type;
+            
+            if (type === 'text') {
+                // Show eye-off icon
+                eyeIcon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                `;
+            } else {
+                // Show eye icon
+                eyeIcon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                `;
+            }
+        });
+
         // Auth form submit
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const email = authEmail.value.trim();
-            const password = authPassword.value;
-            
             authError.classList.remove('show');
             authSuccess.classList.remove('show');
             authSubmitBtn.disabled = true;
-            authSubmitBtn.textContent = isSignUpMode ? 'Creating account...' : 'Signing in...';
-            
+            authSubmitBtn.textContent = 'Loading...';
+
+            const email = authEmail.value;
+            const password = authPassword.value;
+
             try {
                 const sb = initSupabase();
-                if (!sb) throw new Error('Supabase not initialized');
-                
+                if (!sb) throw new Error('Cannot initialize authentication');
+
                 if (isSignUpMode) {
                     const { data, error } = await sb.auth.signUp({
                         email: email,
@@ -879,236 +900,39 @@
             } catch (error) {
                 // Better error messages
                 let errorMessage = error.message;
+                
                 if (error.message.includes('Invalid login credentials')) {
-                    errorMessage = 'Invalid email or password';
+                    errorMessage = 'Invalid email or password. Please try again.';
                 } else if (error.message.includes('Email not confirmed')) {
-                    errorMessage = 'Please confirm your email address';
+                    errorMessage = 'Please confirm your email address first.';
                 } else if (error.message.includes('User already registered')) {
-                    errorMessage = 'This email is already registered';
+                    errorMessage = 'This email is already registered. Try signing in instead.';
+                } else if (error.message.includes('Invalid email')) {
+                    errorMessage = 'Please enter a valid email address.';
+                } else if (error.message.includes('Password should be at least 6 characters')) {
+                    errorMessage = 'Password must be at least 6 characters long.';
                 }
                 
                 authError.textContent = errorMessage;
                 authError.classList.add('show');
-                authSubmitBtn.textContent = isSignUpMode ? 'Sign Up' : 'Sign In';
                 authSubmitBtn.disabled = false;
+                authSubmitBtn.textContent = isSignUpMode ? 'Sign Up' : 'Sign In';
             }
         });
 
-        // Update lock icon
-        function updateLockIcon(locked) {
-            if (locked) {
-                statusIcon.innerHTML = `
-                    <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                `;
-            } else {
-                statusIcon.innerHTML = `
-                    <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
-                `;
+        // Close auth modal on backdrop click
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.classList.remove('active');
             }
-        }
+        });
 
-        // Format number with leading zero
-        function formatTime(num) {
-            return String(num).padStart(2, '0');
-        }
-
-        // Update display
-        function updateDisplay(days, hours, minutes, seconds) {
-            daysEl.textContent = formatTime(days);
-            hoursEl.textContent = formatTime(hours);
-            minutesEl.textContent = formatTime(minutes);
-            secondsEl.textContent = formatTime(seconds);
-        }
-
-        // Update timer
-        function updateTimer() {
-            if (!endTime || isPaused) return;
-            
-            const now = Date.now();
-            const diff = endTime - now;
-            
-            if (diff <= 0) {
-                // Timer finished
-                clearInterval(timerInterval);
-                updateDisplay(0, 0, 0, 0);
-                
-                statusBadge.classList.remove('locked');
-                statusBadge.classList.add('unlocked');
-                statusText.textContent = 'Unlocked';
-                updateLockIcon(false);
-                
-                startBtn.classList.remove('hidden');
-                menuBtn.classList.add('hidden');
-                
-                clearTimerState();
-                return;
-            }
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            updateDisplay(days, hours, minutes, seconds);
-        }
-
-        // Start timer
-        function startTimer(days, hours, minutes) {
-            const totalMs = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
-            endTime = Date.now() + totalMs;
-            isPaused = false;
-            remainingTime = 0;
-            
-            statusBadge.classList.remove('unlocked');
-            statusBadge.classList.add('locked');
-            statusText.textContent = 'Locked';
-            updateLockIcon(true);
-            
-            daysEl.classList.remove('inactive');
-            hoursEl.classList.remove('inactive');
-            minutesEl.classList.remove('inactive');
-            secondsEl.classList.remove('inactive');
-            
-            startBtn.classList.add('hidden');
-            menuBtn.classList.remove('hidden');
-            
-            timerInterval = setInterval(updateTimer, 100);
-            updateTimer();
-            
-            saveTimerState();
-        }
-
-        // Pause/Resume timer
-        function togglePause() {
-            if (isPaused) {
-                // Resume
-                endTime = Date.now() + remainingTime;
-                isPaused = false;
-                timerInterval = setInterval(updateTimer, 100);
-                updateTimer();
-                
-                document.getElementById('pauseBtn').innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="6" y="4" width="4" height="16"></rect>
-                        <rect x="14" y="4" width="4" height="16"></rect>
-                    </svg>
-                    Pause Timer
-                `;
-            } else {
-                // Pause
-                remainingTime = endTime - Date.now();
-                isPaused = true;
-                clearInterval(timerInterval);
-                
-                document.getElementById('pauseBtn').innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                    Resume Timer
-                `;
-            }
-            
-            saveTimerState();
-        }
-
-        // Add time
-        function addTime(days, hours) {
-            const addMs = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000);
-            
-            if (isPaused) {
-                remainingTime += addMs;
-                
-                // Update display
-                const totalSeconds = Math.floor(remainingTime / 1000);
-                const d = Math.floor(totalSeconds / (60 * 60 * 24));
-                const h = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
-                const m = Math.floor((totalSeconds % (60 * 60)) / 60);
-                const s = totalSeconds % 60;
-                
-                updateDisplay(d, h, m, s);
-            } else {
-                endTime += addMs;
-                updateTimer();
-            }
-            
-            saveTimerState();
-        }
-
-        // Remove time
-        function removeTime(days, hours) {
-            const removeMs = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000);
-            
-            if (isPaused) {
-                remainingTime = Math.max(0, remainingTime - removeMs);
-                
-                if (remainingTime === 0) {
-                    resetTimer();
-                    return;
-                }
-                
-                // Update display
-                const totalSeconds = Math.floor(remainingTime / 1000);
-                const d = Math.floor(totalSeconds / (60 * 60 * 24));
-                const h = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
-                const m = Math.floor((totalSeconds % (60 * 60)) / 60);
-                const s = totalSeconds % 60;
-                
-                updateDisplay(d, h, m, s);
-            } else {
-                endTime = Math.max(Date.now(), endTime - removeMs);
-                
-                if (endTime <= Date.now()) {
-                    resetTimer();
-                    return;
-                }
-                
-                updateTimer();
-            }
-            
-            saveTimerState();
-        }
-
-        // Reset timer
-        function resetTimer() {
-            clearInterval(timerInterval);
-            endTime = null;
-            isPaused = false;
-            remainingTime = 0;
-            
-            updateDisplay(0, 0, 0, 0);
-            
-            statusBadge.classList.remove('locked');
-            statusBadge.classList.add('unlocked');
-            statusText.textContent = 'Unlocked';
-            updateLockIcon(false);
-            
-            daysEl.classList.add('inactive');
-            hoursEl.classList.add('inactive');
-            minutesEl.classList.add('inactive');
-            secondsEl.classList.add('inactive');
-            
-            startBtn.classList.remove('hidden');
-            menuBtn.classList.add('hidden');
-            
-            document.getElementById('pauseBtn').innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="6" y="4" width="4" height="16"></rect>
-                    <rect x="14" y="4" width="4" height="16"></rect>
-                </svg>
-                Pause Timer
-            `;
-            
-            clearTimerState();
-        }
-
-        // Save timer state
+        // LocalStorage functions
         function saveTimerState() {
             const state = {
-                endTime,
-                isPaused,
-                remainingTime
+                endTime: endTime,
+                isPaused: isPaused,
+                remainingTime: remainingTime
             };
             localStorage.setItem('timerState', JSON.stringify(state));
             
@@ -1118,16 +942,15 @@
             }
         }
 
-        // Load timer state
         function loadTimerState() {
             const saved = localStorage.getItem('timerState');
             if (saved) {
-                try {
-                    const state = JSON.parse(saved);
+                const state = JSON.parse(saved);
+                if (state.endTime) {
                     endTime = state.endTime;
                     isPaused = state.isPaused;
                     remainingTime = state.remainingTime;
-                    
+
                     // Check if timer should still be active
                     if (!isPaused && endTime > Date.now()) {
                         // Timer is still running
@@ -1182,7 +1005,6 @@
             }
         }
 
-        // Clear timer state
         function clearTimerState() {
             localStorage.removeItem('timerState');
             if (currentUser) {
@@ -1190,7 +1012,7 @@
             }
         }
 
-        // Save timer to cloud
+        // Cloud sync functions
         async function saveTimerToCloud() {
             if (!currentUser) return;
             
@@ -1207,14 +1029,12 @@
                     }, {
                         onConflict: 'user_id'
                     });
-                
                 if (error) console.error('Error saving to cloud:', error);
             } catch (error) {
                 console.error('Error saving to cloud:', error);
             }
         }
 
-        // Load timer from cloud
         async function loadTimerFromCloud() {
             if (!currentUser) return;
             
@@ -1225,7 +1045,7 @@
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .single();
-                
+
                 if (error && error.code !== 'PGRST116') {
                     console.error('Error loading from cloud:', error);
                     return;
@@ -1263,6 +1083,154 @@
             }
         }
 
+        // Format number with leading zero
+        function formatTime(num) {
+            return String(num).padStart(2, '0');
+        }
+
+        // Update display
+        function updateDisplay(days, hours, minutes, seconds) {
+            daysEl.textContent = formatTime(days);
+            hoursEl.textContent = formatTime(hours);
+            minutesEl.textContent = formatTime(minutes);
+            secondsEl.textContent = formatTime(seconds);
+        }
+
+        // Update lock icon
+        function updateLockIcon(locked) {
+            if (locked) {
+                statusIcon.innerHTML = '<rect x="5" y="11" width="14" height="10" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
+            } else {
+                statusIcon.innerHTML = '<rect x="5" y="11" width="14" height="10" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
+            }
+        }
+
+        // Calculate time remaining
+        function updateTimer() {
+            if (!endTime || isPaused) return;
+
+            const now = Date.now();
+            const diff = endTime - now;
+
+            if (diff <= 0) {
+                stopTimer();
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            updateDisplay(days, hours, minutes, seconds);
+        }
+
+        // Start timer
+        function startTimer(days, hours, minutes) {
+            const totalMs = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+            endTime = Date.now() + totalMs;
+            isPaused = false;
+            
+            statusBadge.classList.remove('unlocked');
+            statusBadge.classList.add('locked');
+            statusText.textContent = 'Locked';
+            updateLockIcon(true);
+            
+            daysEl.classList.remove('inactive');
+            hoursEl.classList.remove('inactive');
+            minutesEl.classList.remove('inactive');
+            secondsEl.classList.remove('inactive');
+            
+            startBtn.classList.add('hidden');
+            menuBtn.classList.remove('hidden');
+            
+            timerInterval = setInterval(updateTimer, 100);
+            updateTimer();
+            saveTimerState();
+        }
+
+        // Pause timer
+        function pauseTimer() {
+            if (!isPaused) {
+                isPaused = true;
+                remainingTime = endTime - Date.now();
+                document.getElementById('pauseBtn').innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    Resume Timer
+                `;
+            } else {
+                isPaused = false;
+                endTime = Date.now() + remainingTime;
+                document.getElementById('pauseBtn').innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                    Pause Timer
+                `;
+            }
+            saveTimerState();
+        }
+
+        // Stop timer
+        function stopTimer() {
+            clearInterval(timerInterval);
+            endTime = null;
+            isPaused = false;
+            remainingTime = 0;
+            
+            statusBadge.classList.remove('locked');
+            statusBadge.classList.add('unlocked');
+            statusText.textContent = 'Unlocked';
+            updateLockIcon(false);
+            
+            updateDisplay(0, 0, 0, 0);
+            daysEl.classList.add('inactive');
+            hoursEl.classList.add('inactive');
+            minutesEl.classList.add('inactive');
+            secondsEl.classList.add('inactive');
+            
+            startBtn.classList.remove('hidden');
+            menuBtn.classList.add('hidden');
+            dropdown.classList.remove('active');
+            
+            document.getElementById('pauseBtn').innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                Pause Timer
+            `;
+            
+            clearTimerState();
+        }
+
+        // Add time to existing timer
+        function addTime(days, hours) {
+            const additionalTime = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000);
+            if (isPaused) {
+                remainingTime += additionalTime;
+            } else {
+                endTime += additionalTime;
+            }
+            updateTimer();
+            saveTimerState();
+        }
+
+        // Remove time from existing timer
+        function removeTime(days, hours) {
+            const timeToRemove = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000);
+            if (isPaused) {
+                remainingTime = Math.max(0, remainingTime - timeToRemove);
+            } else {
+                endTime = Math.max(Date.now(), endTime - timeToRemove);
+            }
+            updateTimer();
+            saveTimerState();
+        }
+
         // Event listeners
         startBtn.addEventListener('click', () => {
             setModal.classList.add('active');
@@ -1273,42 +1241,25 @@
             dropdown.classList.toggle('active');
         });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!menuBtn.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.classList.remove('active');
-            }
-        });
-
-        // Close modals when clicking outside
-        [setModal, addModal, removeModal, authModal].forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
-
         document.getElementById('pauseBtn').addEventListener('click', () => {
-            togglePause();
+            pauseTimer();
             dropdown.classList.remove('active');
         });
 
         document.getElementById('addTimeBtn').addEventListener('click', () => {
-            addModal.classList.add('active');
             dropdown.classList.remove('active');
+            addModal.classList.add('active');
+            document.getElementById('addHoursInput').focus();
         });
 
         document.getElementById('removeTimeBtn').addEventListener('click', () => {
-            removeModal.classList.add('active');
             dropdown.classList.remove('active');
+            removeModal.classList.add('active');
+            document.getElementById('removeHoursInput').focus();
         });
 
         document.getElementById('resetBtn').addEventListener('click', () => {
-            if (confirm('Are you sure you want to reset the timer?')) {
-                resetTimer();
-                dropdown.classList.remove('active');
-            }
+            stopTimer();
         });
 
         document.getElementById('confirmSetBtn').addEventListener('click', () => {
@@ -1317,11 +1268,9 @@
             const minutes = parseInt(document.getElementById('setMinutesInput').value) || 0;
             
             if (days > 0 || hours > 0 || minutes > 0) {
+                stopTimer();
                 startTimer(days, hours, minutes);
                 setModal.classList.remove('active');
-                document.getElementById('setDaysInput').value = 1;
-                document.getElementById('setHoursInput').value = 0;
-                document.getElementById('setMinutesInput').value = 0;
             }
         });
 
@@ -1361,56 +1310,58 @@
             removeModal.classList.remove('active');
         });
 
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!menuBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Close modals when clicking backdrop
+        setModal.addEventListener('click', (e) => {
+            if (e.target === setModal) {
+                setModal.classList.remove('active');
+            }
+        });
+
+        addModal.addEventListener('click', (e) => {
+            if (e.target === addModal) {
+                addModal.classList.remove('active');
+            }
+        });
+
+        removeModal.addEventListener('click', (e) => {
+            if (e.target === removeModal) {
+                removeModal.classList.remove('active');
+            }
+        });
+
         // Initialize - load timer from localStorage
         loadTimerState();
         
-        // ===== AUTO-LOGIN FUNCTION =====
-        async function autoLogin() {
+        // Check if user is logged in on page load - try multiple times for iframe contexts
+        async function checkAuth() {
             const sb = initSupabase();
-            if (!sb) {
-                console.log('Supabase not ready, retrying...');
-                return false;
-            }
-            
-            try {
-                // Vérifie d'abord si déjà connecté
-                const { data: { session } } = await sb.auth.getSession();
-                if (session?.user) {
-                    currentUser = session.user;
-                    authButtonText.textContent = 'Logout';
-                    await loadTimerFromCloud();
-                    console.log('Already logged in:', currentUser.email);
-                    return true;
+            if (sb) {
+                try {
+                    const { data: { session } } = await sb.auth.getSession();
+                    if (session?.user) {
+                        currentUser = session.user;
+                        authButtonText.textContent = 'Logout';
+                        await loadTimerFromCloud();
+                    }
+                } catch (error) {
+                    console.log('Auth check error:', error);
                 }
-                
-                // Sinon, connecte-toi automatiquement avec les identifiants
-                console.log('Attempting auto-login...');
-                const { data, error } = await sb.auth.signInWithPassword({
-                    email: AUTO_LOGIN_EMAIL,
-                    password: AUTO_LOGIN_PASSWORD
-                });
-                
-                if (error) {
-                    console.error('Auto-login failed:', error.message);
-                    return false;
-                }
-                
-                currentUser = data.user;
-                authButtonText.textContent = 'Logout';
-                await loadTimerFromCloud();
-                console.log('Auto-login successful:', currentUser.email);
-                return true;
-                
-            } catch (error) {
-                console.log('Auto-login error:', error);
-                return false;
             }
         }
-
-        // Lance l'auto-login avec plusieurs tentatives (pour iframes/Notion)
-        autoLogin();
-        setTimeout(autoLogin, 1000);
-        setTimeout(autoLogin, 2000);
+        
+        // Try immediately
+        checkAuth();
+        
+        // Also try after a delay (for iframe/Notion embeds)
+        setTimeout(checkAuth, 1000);
+        setTimeout(checkAuth, 2000);
     </script>
 </body>
 </html>
