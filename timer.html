@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 60px 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge.unlocked {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.locked {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 40px;
+            align-items: flex-end;
+        }
+
+        .time-unit {
+            flex: 1;
+            text-align: center;
+        }
+
+        .time-unit.seconds {
+            flex: 0.5;
+            opacity: 0.3;
+        }
+
+        .time-value {
+            font-family: 'Courier Prime', monospace;
+            font-size: 56px;
+            font-weight: 400;
+            color: #1a1a1a;
+            line-height: 1;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .time-value.small {
+            font-size: 24px;
+        }
+
+        .time-value.inactive {
+            color: #bdbdbd;
+        }
+
+        .time-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #757575;
+            font-weight: 500;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            position: relative;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2d2d2d;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .menu-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            color: #9e9e9e;
+        }
+
+        .menu-btn:hover {
+            background: #e0e0e0;
+            color: #757575;
+        }
+
+        .menu-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .dropdown {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            color: #1a1a1a;
+            transition: background 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-item:hover {
+            background: #f5f5f5;
+        }
+
+        .dropdown-item.danger {
+            color: #d32f2f;
+        }
+
+        .dropdown-item svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: #757575;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #424242;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Courier Prime', monospace;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        .time-input-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .time-input-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #1a1a1a;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            .time-value {
+                font-size: 42px;
+            }
+
+            .time-value.small {
+                font-size: 20px;
+            }
+
+            .timer-display {
+                gap: 12px;
+            }
+
+            .time-label {
+                font-size: 11px;
+            }
+
+            .modal-content {
+                padding: 24px;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .input-field {
+                padding: 12px 14px;
+                font-size: 15px;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .time-value {
+                font-size: 36px;
+            }
+
+            .time-value.small {
+                font-size: 18px;
+            }
+
+            .timer-display {
+                gap: 8px;
+            }
+
+            .time-label {
+                font-size: 10px;
+            }
+
+            .status-badge {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+
+            .time-input-container {
+                gap: 8px;
+            }
+
+            .input-field {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .input-label {
+                font-size: 11px;
+                margin-bottom: 6px;
+            }
+
+            .modal-actions {
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+
+            .dropdown {
+                min-width: 160px;
+            }
+
+            .dropdown-item {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status-badge unlocked" id="statusBadge">
+            <svg class="status-icon" id="statusIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+            </svg>
+            <span id="statusText">Unlocked</span>
+        </div>
+
+        <div class="timer-display">
+            <div class="time-unit">
+                <div class="time-value inactive" id="days">00</div>
+                <div class="time-label">Days</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value inactive" id="hours">00</div>
+                <div class="time-label">Hours</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value inactive" id="minutes">00</div>
+                <div class="time-label">Minutes</div>
+            </div>
+            <div class="time-unit seconds">
+                <div class="time-value small inactive" id="seconds">00</div>
+                <div class="time-label">Sec</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn">Set Timer</button>
+            <button class="menu-btn hidden" id="menuBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="1"></circle>
+                    <circle cx="12" cy="5" r="1"></circle>
+                    <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+            </button>
+            <div class="dropdown" id="dropdown">
+                <button class="dropdown-item" id="pauseBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                    Pause Timer
+                </button>
+                <button class="dropdown-item" id="addTimeBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Time
+                </button>
+                <button class="dropdown-item" id="removeTimeBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Remove Time
+                </button>
+                <button class="dropdown-item danger" id="resetBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    Reset Timer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Set Timer Modal -->
+    <div class="modal" id="setModal">
+        <div class="modal-content">
+            <div class="modal-title">Set Timer</div>
+            <div class="modal-subtitle">Choose the duration</div>
+            <div class="time-input-container">
+                <div class="time-input-group">
+                    <label class="input-label">Days</label>
+                    <input type="number" class="input-field" id="setDaysInput" min="0" value="1" step="1">
+                </div>
+                <div class="time-input-group">
+                    <label class="input-label">Hours</label>
+                    <input type="number" class="input-field" id="setHoursInput" min="0" max="23" value="0" step="1">
+                </div>
+                <div class="time-input-group">
+                    <label class="input-label">Minutes</label>
+                    <input type="number" class="input-field" id="setMinutesInput" min="0" max="59" value="0" step="1">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelSetBtn">Cancel</button>
+                <button class="btn btn-primary" id="confirmSetBtn">Start Timer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Time Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-title">Add Time</div>
+            <div class="modal-subtitle">Add additional time to the timer</div>
+            <div class="time-input-container">
+                <div class="time-input-group">
+                    <label class="input-label">Days</label>
+                    <input type="number" class="input-field" id="addDaysInput" min="0" value="0" step="1">
+                </div>
+                <div class="time-input-group">
+                    <label class="input-label">Hours</label>
+                    <input type="number" class="input-field" id="addHoursInput" min="0" value="1" step="1">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelAddBtn">Cancel</button>
+                <button class="btn btn-primary" id="confirmAddBtn">Add Time</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Time Modal -->
+    <div class="modal" id="removeModal">
+        <div class="modal-content">
+            <div class="modal-title">Remove Time</div>
+            <div class="modal-subtitle">Remove time from the timer</div>
+            <div class="time-input-container">
+                <div class="time-input-group">
+                    <label class="input-label">Days</label>
+                    <input type="number" class="input-field" id="removeDaysInput" min="0" value="0" step="1">
+                </div>
+                <div class="time-input-group">
+                    <label class="input-label">Hours</label>
+                    <input type="number" class="input-field" id="removeHoursInput" min="0" value="1" step="1">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelRemoveBtn">Cancel</button>
+                <button class="btn btn-primary" id="confirmRemoveBtn">Remove Time</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let endTime = null;
+        let timerInterval = null;
+        let isPaused = false;
+        let remainingTime = 0;
+
+        const statusBadge = document.getElementById('statusBadge');
+        const statusText = document.getElementById('statusText');
+        const statusIcon = document.getElementById('statusIcon');
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        const startBtn = document.getElementById('startBtn');
+        const menuBtn = document.getElementById('menuBtn');
+        const dropdown = document.getElementById('dropdown');
+        const setModal = document.getElementById('setModal');
+        const addModal = document.getElementById('addModal');
+        const removeModal = document.getElementById('removeModal');
+
+        // LocalStorage functions
+        function saveTimerState() {
+            const state = {
+                endTime: endTime,
+                isPaused: isPaused,
+                remainingTime: remainingTime
+            };
+            localStorage.setItem('timerState', JSON.stringify(state));
+        }
+
+        function loadTimerState() {
+            const saved = localStorage.getItem('timerState');
+            if (saved) {
+                const state = JSON.parse(saved);
+                if (state.endTime) {
+                    endTime = state.endTime;
+                    isPaused = state.isPaused;
+                    remainingTime = state.remainingTime;
+
+                    // Check if timer should still be active
+                    if (!isPaused && endTime > Date.now()) {
+                        // Timer is still running
+                        statusBadge.classList.remove('unlocked');
+                        statusBadge.classList.add('locked');
+                        statusText.textContent = 'Locked';
+                        updateLockIcon(true);
+                        
+                        daysEl.classList.remove('inactive');
+                        hoursEl.classList.remove('inactive');
+                        minutesEl.classList.remove('inactive');
+                        secondsEl.classList.remove('inactive');
+                        
+                        startBtn.classList.add('hidden');
+                        menuBtn.classList.remove('hidden');
+                        
+                        timerInterval = setInterval(updateTimer, 100);
+                        updateTimer();
+                    } else if (isPaused && remainingTime > 0) {
+                        // Timer is paused
+                        statusBadge.classList.remove('unlocked');
+                        statusBadge.classList.add('locked');
+                        statusText.textContent = 'Locked';
+                        updateLockIcon(true);
+                        
+                        startBtn.classList.add('hidden');
+                        menuBtn.classList.remove('hidden');
+                        
+                        // Calculate and display paused time
+                        const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+                        
+                        updateDisplay(days, hours, minutes, seconds);
+                        daysEl.classList.remove('inactive');
+                        hoursEl.classList.remove('inactive');
+                        minutesEl.classList.remove('inactive');
+                        secondsEl.classList.remove('inactive');
+                        
+                        document.getElementById('pauseBtn').innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Resume Timer
+                        `;
+                    } else {
+                        // Timer expired, clear it
+                        clearTimerState();
+                    }
+                }
+            }
+        }
+
+        function clearTimerState() {
+            localStorage.removeItem('timerState');
+        }
+
+        // Format number with leading zero
+        function formatTime(num) {
+            return String(num).padStart(2, '0');
+        }
+
+        // Update display
+        function updateDisplay(days, hours, minutes, seconds) {
+            daysEl.textContent = formatTime(days);
+            hoursEl.textContent = formatTime(hours);
+            minutesEl.textContent = formatTime(minutes);
+            secondsEl.textContent = formatTime(seconds);
+        }
+
+        // Update lock icon
+        function updateLockIcon(locked) {
+            if (locked) {
+                statusIcon.innerHTML = '<rect x="5" y="11" width="14" height="10" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
+            } else {
+                statusIcon.innerHTML = '<rect x="5" y="11" width="14" height="10" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
+            }
+        }
+
+        // Calculate time remaining
+        function updateTimer() {
+            if (!endTime || isPaused) return;
+
+            const now = Date.now();
+            const diff = endTime - now;
+
+            if (diff <= 0) {
+                stopTimer();
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            updateDisplay(days, hours, minutes, seconds);
+        }
+
+        // Start timer
+        function startTimer(days, hours, minutes) {
+            const totalMs = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+            endTime = Date.now() + totalMs;
+            isPaused = false;
+            
+            statusBadge.classList.remove('unlocked');
+            statusBadge.classList.add('locked');
+            statusText.textContent = 'Locked';
+            updateLockIcon(true);
+            
+            daysEl.classList.remove('inactive');
+            hoursEl.classList.remove('inactive');
+            minutesEl.classList.remove('inactive');
+            secondsEl.classList.remove('inactive');
+            
+            startBtn.classList.add('hidden');
+            menuBtn.classList.remove('hidden');
+            
+            timerInterval = setInterval(updateTimer, 100);
+            updateTimer();
+            saveTimerState();
+        }
+
+        // Pause timer
+        function pauseTimer() {
+            if (!isPaused) {
+                isPaused = true;
+                remainingTime = endTime - Date.now();
+                document.getElementById('pauseBtn').innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    Resume Timer
+                `;
+            } else {
+                isPaused = false;
+                endTime = Date.now() + remainingTime;
+                document.getElementById('pauseBtn').innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                    Pause Timer
+                `;
+            }
+            saveTimerState();
+        }
+
+        // Stop timer
+        function stopTimer() {
+            clearInterval(timerInterval);
+            endTime = null;
+            isPaused = false;
+            remainingTime = 0;
+            
+            statusBadge.classList.remove('locked');
+            statusBadge.classList.add('unlocked');
+            statusText.textContent = 'Unlocked';
+            updateLockIcon(false);
+            
+            updateDisplay(0, 0, 0, 0);
+            daysEl.classList.add('inactive');
+            hoursEl.classList.add('inactive');
+            minutesEl.classList.add('inactive');
+            secondsEl.classList.add('inactive');
+            
+            startBtn.classList.remove('hidden');
+            menuBtn.classList.add('hidden');
+            dropdown.classList.remove('active');
+            
+            document.getElementById('pauseBtn').innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                Pause Timer
+            `;
+            
+            clearTimerState();
+        }
+
+        // Add time to existing timer
+        function addTime(days, hours, minutes) {
+            const additionalTime = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+            if (isPaused) {
+                remainingTime += additionalTime;
+            } else {
+                endTime += additionalTime;
+            }
+            updateTimer();
+            saveTimerState();
+        }
+
+        // Remove time from existing timer
+        function removeTime(days, hours, minutes) {
+            const timeToRemove = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+            if (isPaused) {
+                remainingTime = Math.max(0, remainingTime - timeToRemove);
+            } else {
+                endTime = Math.max(Date.now(), endTime - timeToRemove);
+            }
+            updateTimer();
+            saveTimerState();
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', () => {
+            setModal.classList.add('active');
+            document.getElementById('setDaysInput').focus();
+        });
+
+        menuBtn.addEventListener('click', () => {
+            dropdown.classList.toggle('active');
+        });
+
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            pauseTimer();
+            dropdown.classList.remove('active');
+        });
+
+        document.getElementById('addTimeBtn').addEventListener('click', () => {
+            dropdown.classList.remove('active');
+            addModal.classList.add('active');
+            document.getElementById('addHoursInput').focus();
+        });
+
+        document.getElementById('removeTimeBtn').addEventListener('click', () => {
+            dropdown.classList.remove('active');
+            removeModal.classList.add('active');
+            document.getElementById('removeHoursInput').focus();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            stopTimer();
+        });
+
+        document.getElementById('confirmSetBtn').addEventListener('click', () => {
+            const days = parseInt(document.getElementById('setDaysInput').value) || 0;
+            const hours = parseInt(document.getElementById('setHoursInput').value) || 0;
+            const minutes = parseInt(document.getElementById('setMinutesInput').value) || 0;
+            
+            if (days > 0 || hours > 0 || minutes > 0) {
+                stopTimer();
+                startTimer(days, hours, minutes);
+                setModal.classList.remove('active');
+            }
+        });
+
+        document.getElementById('cancelSetBtn').addEventListener('click', () => {
+            setModal.classList.remove('active');
+        });
+
+        document.getElementById('confirmAddBtn').addEventListener('click', () => {
+            const days = parseInt(document.getElementById('addDaysInput').value) || 0;
+            const hours = parseInt(document.getElementById('addHoursInput').value) || 0;
+            
+            if (days > 0 || hours > 0) {
+                addTime(days, hours, 0);
+                addModal.classList.remove('active');
+                document.getElementById('addDaysInput').value = 0;
+                document.getElementById('addHoursInput').value = 1;
+            }
+        });
+
+        document.getElementById('cancelAddBtn').addEventListener('click', () => {
+            addModal.classList.remove('active');
+        });
+
+        document.getElementById('confirmRemoveBtn').addEventListener('click', () => {
+            const days = parseInt(document.getElementById('removeDaysInput').value) || 0;
+            const hours = parseInt(document.getElementById('removeHoursInput').value) || 0;
+            
+            if (days > 0 || hours > 0) {
+                removeTime(days, hours, 0);
+                removeModal.classList.remove('active');
+                document.getElementById('removeDaysInput').value = 0;
+                document.getElementById('removeHoursInput').value = 1;
+            }
+        });
+
+        document.getElementById('cancelRemoveBtn').addEventListener('click', () => {
+            removeModal.classList.remove('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!menuBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Close modals when clicking backdrop
+        setModal.addEventListener('click', (e) => {
+            if (e.target === setModal) {
+                setModal.classList.remove('active');
+            }
+        });
+
+        addModal.addEventListener('click', (e) => {
+            if (e.target === addModal) {
+                addModal.classList.remove('active');
+            }
+        });
+
+        removeModal.addEventListener('click', (e) => {
+            if (e.target === removeModal) {
+                removeModal.classList.remove('active');
+            }
+        });
+
+        // Load saved timer state on page load
+        loadTimerState();
+    </script>
+</body>
+</html>
