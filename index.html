@@ -1387,73 +1387,55 @@
             const sb = initSupabase();
             if (!sb) return;
             
-            // Check if URL has recovery token
-            const hashParams = new URLSearchParams(window.location.hash.substring(1));
-            const type = hashParams.get('type');
-            
-            if (type === 'recovery') {
-                // User clicked reset password link from email
-                authModalTitle.textContent = 'Reset Password';
-                authModalSubtitle.textContent = 'Enter your new password';
-                
-                // Hide email field, show only password
-                authEmail.parentElement.style.display = 'none';
-                forgotPasswordContainer.style.display = 'none';
-                document.getElementById('rememberMe').parentElement.parentElement.style.display = 'none';
-                
-                authSubmitBtn.textContent = 'Reset Password';
-                
-                // Show modal
-                authModal.classList.add('active');
-                authPassword.focus();
-                
-                // Handle form submission for password reset
-                const resetHandler = async (e) => {
-                    e.preventDefault();
-                    authError.classList.remove('show');
-                    authSuccess.classList.remove('show');
-                    authSubmitBtn.disabled = true;
-                    authSubmitBtn.textContent = 'Resetting...';
+            // Supabase handles the token automatically
+            // Just listen for password recovery events
+            sb.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'PASSWORD_RECOVERY') {
+                    // User clicked reset password link from email
+                    authModalTitle.textContent = 'Reset Password';
+                    authModalSubtitle.textContent = 'Enter your new password';
                     
-                    try {
-                        const { error } = await sb.auth.updateUser({
-                            password: authPassword.value
-                        });
+                    // Hide email field, show only password
+                    authEmail.parentElement.style.display = 'none';
+                    forgotPasswordContainer.style.display = 'none';
+                    document.getElementById('rememberMe').parentElement.parentElement.style.display = 'none';
+                    
+                    authSubmitBtn.textContent = 'Reset Password';
+                    
+                    // Show modal
+                    authModal.classList.add('active');
+                    authPassword.focus();
+                    
+                    // Handle password reset
+                    authForm.onsubmit = async (e) => {
+                        e.preventDefault();
+                        authError.classList.remove('show');
+                        authSuccess.classList.remove('show');
+                        authSubmitBtn.disabled = true;
+                        authSubmitBtn.textContent = 'Resetting...';
                         
-                        if (error) throw error;
-                        
-                        authSuccess.textContent = 'Password reset successfully! You can now sign in.';
-                        authSuccess.classList.add('show');
-                        
-                        // Clear URL hash
-                        window.location.hash = '';
-                        
-                        // Close modal and reset form after 2 seconds
-                        setTimeout(() => {
-                            authModal.classList.remove('active');
-                            authEmail.parentElement.style.display = 'block';
-                            forgotPasswordContainer.style.display = 'block';
-                            document.getElementById('rememberMe').parentElement.parentElement.style.display = 'block';
-                            authModalTitle.textContent = 'Sign In';
-                            authModalSubtitle.textContent = 'Sign in to sync your timer across devices';
-                            authSubmitBtn.textContent = 'Sign In';
-                            authPassword.value = '';
-                            authError.classList.remove('show');
-                            authSuccess.classList.remove('show');
-                            authForm.removeEventListener('submit', resetHandler);
-                        }, 2000);
-                    } catch (error) {
-                        authError.textContent = error.message;
-                        authError.classList.add('show');
-                        authSubmitBtn.disabled = false;
-                        authSubmitBtn.textContent = 'Reset Password';
-                    }
-                };
-                
-                // Remove normal submit handler and add reset handler
-                authForm.removeEventListener('submit', authForm._submitHandler);
-                authForm.addEventListener('submit', resetHandler);
-            }
+                        try {
+                            const { error } = await sb.auth.updateUser({
+                                password: authPassword.value
+                            });
+                            
+                            if (error) throw error;
+                            
+                            authSuccess.textContent = 'Password updated! Signing you in...';
+                            authSuccess.classList.add('show');
+                            
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } catch (error) {
+                            authError.textContent = error.message;
+                            authError.classList.add('show');
+                            authSubmitBtn.disabled = false;
+                            authSubmitBtn.textContent = 'Reset Password';
+                        }
+                    };
+                }
+            });
         }
         
         // Check if user is logged in on page load - try multiple times for iframe contexts
