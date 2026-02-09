@@ -604,7 +604,7 @@
                 if (!sb) return;
                 
                 const { error } = await sb
-                    .from('timers')
+                    .from('timer_simple')
                     .upsert({
                         id: FIXED_USER_ID,
                         end_time: endTime,
@@ -626,7 +626,7 @@
                 if (!sb) return false;
                 
                 const { data, error } = await sb
-                    .from('timers')
+                    .from('timer_simple')
                     .select('*')
                     .eq('id', FIXED_USER_ID)
                     .single();
@@ -655,7 +655,7 @@
                 if (!sb) return;
                 
                 const { error } = await sb
-                    .from('timers')
+                    .from('timer_simple')
                     .delete()
                     .eq('id', FIXED_USER_ID);
                 if (error) console.error('Error clearing from cloud:', error);
