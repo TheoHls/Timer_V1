@@ -632,6 +632,9 @@
                         <span>Keep me signed in</span>
                     </label>
                 </div>
+                <div style="text-align: right; margin-top: 8px; margin-bottom: 16px;" id="forgotPasswordContainer">
+                    <a href="#" id="forgotPasswordLink" style="font-size: 13px; color: #757575; text-decoration: none;">Forgot password?</a>
+                </div>
                 <div class="error-message" id="authError"></div>
                 <div class="success-message" id="authSuccess"></div>
                 <div class="modal-actions" style="margin-top: 20px;">
@@ -747,6 +750,8 @@
         const authToggleLink = document.getElementById('authToggleLink');
         const passwordToggle = document.getElementById('passwordToggle');
         const eyeIcon = document.getElementById('eyeIcon');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const forgotPasswordContainer = document.getElementById('forgotPasswordContainer');
 
         const statusBadge = document.getElementById('statusBadge');
         const statusText = document.getElementById('statusText');
@@ -818,15 +823,53 @@
                 authSubmitBtn.textContent = 'Sign Up';
                 authToggleText.textContent = 'Already have an account?';
                 authToggleLink.textContent = 'Sign In';
+                forgotPasswordContainer.style.display = 'none';
             } else {
                 authModalTitle.textContent = 'Sign In';
                 authModalSubtitle.textContent = 'Sign in to sync your timer across devices';
                 authSubmitBtn.textContent = 'Sign In';
                 authToggleText.textContent = "Don't have an account?";
                 authToggleLink.textContent = 'Sign Up';
+                forgotPasswordContainer.style.display = 'block';
             }
             authError.classList.remove('show');
             authSuccess.classList.remove('show');
+        });
+
+        // Forgot password
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const email = authEmail.value;
+            if (!email) {
+                authError.textContent = 'Please enter your email address first.';
+                authError.classList.add('show');
+                authEmail.focus();
+                return;
+            }
+            
+            authError.classList.remove('show');
+            authSuccess.classList.remove('show');
+            forgotPasswordLink.textContent = 'Sending...';
+            
+            try {
+                const sb = initSupabase();
+                if (!sb) throw new Error('Cannot initialize authentication');
+                
+                const { error } = await sb.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin
+                });
+                
+                if (error) throw error;
+                
+                authSuccess.textContent = 'Password reset link sent! Check your email.';
+                authSuccess.classList.add('show');
+                forgotPasswordLink.textContent = 'Forgot password?';
+            } catch (error) {
+                authError.textContent = error.message;
+                authError.classList.add('show');
+                forgotPasswordLink.textContent = 'Forgot password?';
+            }
         });
 
         // Password visibility toggle
