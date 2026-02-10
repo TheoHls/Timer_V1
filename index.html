@@ -427,7 +427,7 @@
                 <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
                 <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
             </svg>
-            <span id="statusText">Unlocked</span>
+            <span id="statusText">Unlocked</span><span id="elapsedText" style="text-transform: none !important;"></span>
         </div>
 
         <div class="timer-display">
@@ -567,6 +567,7 @@
         let timerInterval = null;
         let isPaused = false;
         let remainingTime = 0;
+        let timerStartTime = null; // Track when timer started
 
         // Supabase client
         let supabaseClient = null;
@@ -576,6 +577,7 @@
         const statusBadge = document.getElementById('statusBadge');
         const statusText = document.getElementById('statusText');
         const statusIcon = document.getElementById('statusIcon');
+        const elapsedText = document.getElementById('elapsedText');
         const daysEl = document.getElementById('days');
         const hoursEl = document.getElementById('hours');
         const minutesEl = document.getElementById('minutes');
@@ -686,6 +688,24 @@
             }
         }
 
+        // Update elapsed time text
+        function updateElapsedTime() {
+            if (!timerStartTime || (!endTime && !isPaused)) {
+                elapsedText.textContent = '';
+                return;
+            }
+
+            const elapsed = Date.now() - timerStartTime;
+            const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+            let parts = [];
+            if (days > 0) parts.push(`${days}d`);
+            if (hours > 0 || parts.length === 0) parts.push(`${hours}h`);
+
+            elapsedText.textContent = ` for ${parts.join(' ')}`;
+        }
+
         // Calculate time remaining
         function updateTimer() {
             if (!endTime || isPaused) return;
@@ -704,6 +724,7 @@
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
             updateDisplay(days, hours, minutes, seconds);
+            updateElapsedTime();
         }
 
         // Start timer
@@ -711,6 +732,7 @@
             const totalMs = (days * 24 * 60 * 60 * 1000) + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
             endTime = Date.now() + totalMs;
             isPaused = false;
+            timerStartTime = Date.now();
             
             statusBadge.classList.remove('unlocked');
             statusBadge.classList.add('locked');
@@ -761,11 +783,13 @@
             endTime = null;
             isPaused = false;
             remainingTime = 0;
+            timerStartTime = null;
             
             statusBadge.classList.remove('locked');
             statusBadge.classList.add('unlocked');
             statusText.textContent = 'Unlocked';
             updateLockIcon(false);
+            elapsedText.textContent = '';
             
             updateDisplay(0, 0, 0, 0);
             daysEl.classList.add('inactive');
@@ -817,6 +841,10 @@
             const loaded = await loadTimerFromCloud();
             
             if (loaded && endTime) {
+                // Calculate start time from current timer state
+                const totalDuration = endTime - Date.now() + (isPaused ? remainingTime : 0);
+                timerStartTime = Date.now() - (totalDuration - (isPaused ? remainingTime : (endTime - Date.now())));
+                
                 if (!isPaused && endTime > Date.now()) {
                     // Timer is still running
                     statusBadge.classList.remove('unlocked');
@@ -850,6 +878,7 @@
                     const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
                     
                     updateDisplay(days, hours, minutes, seconds);
+                    updateElapsedTime();
                     daysEl.classList.remove('inactive');
                     hoursEl.classList.remove('inactive');
                     minutesEl.classList.remove('inactive');
