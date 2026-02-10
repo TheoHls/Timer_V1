@@ -427,7 +427,7 @@
                 <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
                 <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
             </svg>
-            <span id="statusText">Unlocked</span><span id="elapsedText" style="text-transform: none !important;"></span>
+            <span><span id="statusText">Unlocked</span><span id="elapsedText" style="text-transform: none !important;"></span></span>
         </div>
 
         <div class="timer-display">
@@ -612,6 +612,7 @@
                         end_time: endTime,
                         is_paused: isPaused,
                         remaining_time: remainingTime,
+                        timer_start_time: timerStartTime,
                         updated_at: new Date().toISOString()
                     }, {
                         onConflict: 'id'
@@ -642,6 +643,7 @@
                     endTime = data.end_time;
                     isPaused = data.is_paused;
                     remainingTime = data.remaining_time;
+                    timerStartTime = data.timer_start_time || Date.now(); // Fallback if not stored
                     return true;
                 }
                 return false;
@@ -841,10 +843,6 @@
             const loaded = await loadTimerFromCloud();
             
             if (loaded && endTime) {
-                // Calculate start time from current timer state
-                const totalDuration = endTime - Date.now() + (isPaused ? remainingTime : 0);
-                timerStartTime = Date.now() - (totalDuration - (isPaused ? remainingTime : (endTime - Date.now())));
-                
                 if (!isPaused && endTime > Date.now()) {
                     // Timer is still running
                     statusBadge.classList.remove('unlocked');
